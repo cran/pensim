@@ -12,7 +12,12 @@ polynomial (finer grid for small penalty values, and coarser grid for
 larger penalty values).
 }
 \usage{
-scan.l1l2(L1range = c(0.1, 100.1), L2range = c(0.1, 100.1), L1.ngrid = 50, L2.ngrid = 50, nprocessors = 1, polydegree = 1, ...)
+scan.l1l2(L1range = c(0.1, 100.1),
+          L2range = c(0.1, 100.1),
+          L1.ngrid = 50,
+          L2.ngrid = 50,
+          nprocessors = 1,
+          polydegree = 1, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -49,7 +54,8 @@ scan.l1l2(L1range = c(0.1, 100.1), L2range = c(0.1, 100.1), L1.ngrid = 50, L2.ng
 }
 \value{
   \item{cvl}{matrix of cvl values along the grid}
-  \item{L1range}{L1range,L2range}{L2range}
+  \item{L1range}{range of L1 penalties to scan}
+  \item{L2range}{range of L2 penalties to scan}
   \item{xlab}{A text string indicating the range of L1 penalties}
   \item{ylab}{A text string giving the range of L2 penalties}
   \item{zlab}{A text string giving the range of cvl values}

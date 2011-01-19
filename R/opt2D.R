@@ -140,7 +140,7 @@ function(nsim,L1range=c(0.001,100),L2range=c(0.001,100),dofirst="both",nprocesso
     print(paste("Scanning L1 between",paste(L1range.clipped,collapse="-")))
     print(paste("Scanning L2 between",paste(L2range.clipped,collapse="-")))
     cvlmatrix <- scan.l1l2(L1range=L1range.clipped,L2range=L2range.clipped,L1.ngrid=L1gridsize,L2.ngrid=L2gridsize,nprocessors=nprocessors,polydegree=1,...)$cvl
-    ranking <- matrix(rank(-cvlmatrix,ties="random"),ncol=ncol(cvlmatrix))
+    ranking <- matrix(rank(-cvlmatrix,ties.method="random"),ncol=ncol(cvlmatrix))
     top.positions <- lapply(1:5,function(n) which(ranking==n,arr.ind=TRUE))
     top.positions <- lapply(top.positions,function(x) as.numeric(c(L1range,L2range,rownames(cvlmatrix)[x[1]],colnames(cvlmatrix)[x[2]])))
     startpositions <- t(sapply(top.positions,function(x) x[5:6]))

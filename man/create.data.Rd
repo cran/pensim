@@ -2,7 +2,7 @@
 \alias{create.data}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Function to simulate correlated predictors with specified associations with time-to-event or binary outcome
+simulate correlated predictors with time-to-event or binary outcome
 }
 \description{
   This function creates multiple groups of predictor variables which may
@@ -10,7 +10,14 @@ Function to simulate correlated predictors with specified associations with time
   censoring) response according to specified weights of the predictors.
 }
 \usage{
-create.data(nvars = c(100, 100, 100, 100, 600), cors = c(0.8, 0, 0.8, 0, 0), associations = c(0.5, 0.5, 0.3, 0.3, 0), firstonly = c(TRUE, FALSE, TRUE, FALSE, FALSE), nsamples = 100, response = "timetoevent", basehaz = 0.2, logisticintercept = 0)
+create.data(nvars = c(100, 100, 100, 100, 600),
+            cors = c(0.8, 0, 0.8, 0, 0),
+            associations = c(0.5, 0.5, 0.3, 0.3, 0),
+            firstonly = c(TRUE, FALSE, TRUE, FALSE, FALSE),
+            nsamples = 100,
+            response = "timetoevent",
+            basehaz = 0.2,
+            logisticintercept = 0)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

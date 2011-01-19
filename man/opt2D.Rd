@@ -2,7 +2,7 @@
 \alias{opt2D}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Parallelized, two-dimensional tuning of Elastic Net L1/L2 penalty parameters
+Parallelized, two-dimensional tuning of Elastic Net L1/L2 penalties
 }
 \description{
   This function implements parallelized two-dimensional optimization of Elastic Net
@@ -11,7 +11,12 @@ Parallelized, two-dimensional tuning of Elastic Net L1/L2 penalty parameters
   from this grid as starting points for the convex optimization problem.
 }
 \usage{
-opt2D(nsim, L1range = c(0.001, 100), L2range = c(0.001, 100), dofirst = "both", nprocessors = 1, L1gridsize = 10, L2gridsize = 10, ...)
+opt2D(nsim,
+      L1range = c(0.001, 100),
+      L2range = c(0.001, 100),
+      dofirst = "both",
+      nprocessors = 1,
+      L1gridsize = 10, L2gridsize = 10, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{

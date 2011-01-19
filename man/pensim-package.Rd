@@ -3,8 +3,7 @@
 \alias{pensim}
 \docType{package}
 \title{
-Functions and data for simulation of high-dimensional data and
-parallelized repeated penalized regression
+Functions and data for simulation of high-dimensional data and parallelized repeated penalized regression
 }
 \description{
 Simulation of continuous, correlated high-dimensional data with
