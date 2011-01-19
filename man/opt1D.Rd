@@ -1,0 +1,144 @@
+\name{opt1D}
+\alias{opt1D}
+%- Also NEED an '\alias' for EACH other topic documented here.
+\title{Parallelized repeated tuning of Lasso or Ridge penalty parameter
+}
+\description{
+This function is a wrapper to the optL1 and optL2 functions of the
+penalized R package, useful for parallelized repeated tuning of the
+penalty parameters.
+}
+\usage{
+opt1D(nsim = 50, nprocessors = 1, setpen = "L1", ...)
+}
+%- maybe also 'usage' for other objects documented here.
+\arguments{
+  \item{nsim}{
+    Number of times to repeat the simulation (around 50 is suggested)
+}
+  \item{nprocessors}{
+    An integer number of processors to use.
+}
+  \item{setpen}{
+    Either "L1" (Lasso) or "L2" (Ridge) penalty
+}
+  \item{\dots}{
+    arguments passed on to optL1 or optL2 function of the penalized R package
+}
+}
+\details{
+  This function sets up a SNOW (Simple Network of Workstations) "sock"
+  cluster to parallelize the task of repeated tunings the L1 or L2 penalty
+  parameter.  Tuning of the penalty parameters is done by the optL1 or
+  optL2 functions of the penalized R package.
+}
+\value{
+  Returns a matrix with the following columns:
+  \item{L1 (or L2)}{optimized value of the penalty parameter}
+  \item{cvl}{optimized cross-validated likelihood}
+  \item{coef_1, coef_2, ..., coef_n}{argmax coefficients for the model
+    with this value of the tuning parameter}
+
+  The matrix contains one row for each repeat of the regression.
+}
+
+\references{
+Waldron L., Pintilie M., Huttenhower C.*, and Jurisica I.*   Optimized
+application of penalized regression methods to diverse genomic
+data. (2010). Under review.  (*equal contribution)
+}
+\author{
+Levi Waldron et al.
+}
+\note{
+Depends on the R packages: penalized, snow, rlecuyer
+}
+
+%% ~Make other sections like Warning with \section{Warning }{....} ~
+
+\seealso{
+  %% ~~objects to See Also as \code{\link{help}}, ~~~
+}
+\examples{
+data(beer.exprs)
+data(beer.survival)
+
+gene.quant <- apply(beer.exprs,1,quantile,probs=0.75)
+dat.filt <- beer.exprs[gene.quant>log2(100),]
+gene.iqr <- apply(dat.filt,1,IQR)
+dat.filt <- as.matrix(dat.filt[gene.iqr>0.5,])
+dat.final <- scale(t(dat.filt))
+
+##define training and test sets
+set.seed(9)
+trainingset <- sample(rownames(dat.final),round(nrow(dat.final)/2))
+testset <- rownames(dat.final)[!rownames(dat.final)\%in\%trainingset]
+
+dat.training <- data.frame(dat.final[trainingset,])
+pheno.training <- beer.survival[trainingset,]
+
+library(survival)
+surv.training <- Surv(pheno.training$os,pheno.training$status)
+
+
+dat.test <- data.frame(dat.final[testset,])
+all.equal(colnames(dat.training),colnames(dat.test))
+pheno.test <- beer.survival[testset,]
+surv.test <- Surv(pheno.test$os,pheno.test$status)
+
+library(penalized)
+set.seed(10)
+system.time(output <- opt1D(nsim=50,nprocessors=8,setpen="L1",response=surv.training,penalized=dat.training,fold=10,positive=FALSE,standardize=FALSE,minlambda1=3))
+
+cc <- output[which.max(output[,"cvl"]),-(1:2)]  #coefficients
+sum(abs(cc)>0)  #14 are non-zero
+
+preds.training <- as.matrix(dat.training) \%*\% cc
+preds.training.median <- median(preds.training)
+preds.training.dichot <- ifelse(preds.training > preds.training.median,"high risk","low risk")
+preds.training.dichot <- factor(preds.training.dichot[,1],levels=c("low risk","high risk"))
+preds.test <- as.matrix(dat.test) \%*\% cc
+preds.test.dichot <- ifelse(preds.test > preds.training.median,"high risk","low risk")
+preds.test.dichot <- factor(preds.test.dichot[,1],levels=c("low risk","high risk"))
+
+coxphfit.training <- coxph(surv.training~preds.training.dichot)
+survfit.training <- survfit(surv.training~preds.training.dichot)
+summary(coxphfit.training)
+coxphfit.test <- coxph(surv.test~preds.test.dichot)
+survfit.test <- survfit(surv.test~preds.test.dichot)
+summary(coxphfit.test)
+
+(p.training <- signif(summary(coxphfit.training)$logtest[3],2))  #likelihood ratio test
+(hr.training <- signif(summary(coxphfit.training)$conf.int[1],2))
+(hr.lower.training <- summary(coxphfit.training)$conf.int[3])
+(hr.upper.training <- summary(coxphfit.training)$conf.int[4])
+plot(survfit.training[2],
+     conf.int=FALSE,
+     xlab="Months",
+     main="TRAINING",
+     ylab="Overall survival",
+     col="red")
+lines(survfit.training[1],col="black")
+xmax <- par("usr")[2]
+text(x=xmax,y=0.9,lab=paste("HR=",hr.training),pos=2)
+text(x=xmax,y=0.8,lab=paste("p=",p.training,"",sep=""),pos=2)
+tmp <- summary(preds.training.dichot)
+text(x=c(xmax,xmax),y=c(0.7,0.6),lab=paste(tmp,names(tmp)),col=1:2,pos=2)
+(p.test <- signif(summary(coxphfit.test)$logtest[3],2))  #likelihood ratio test
+(hr.test <- signif(summary(coxphfit.test)$conf.int[1],2))
+(hr.lower.test <- summary(coxphfit.test)$conf.int[3])
+(hr.upper.test <- summary(coxphfit.test)$conf.int[4])
+plot(survfit.test[2],
+     conf.int=FALSE,
+     xlab="Months",
+     main="TEST",
+     col="red")
+lines(survfit.test[1],col="black")
+xmax <- par("usr")[2]
+text(x=xmax,y=0.95,lab=paste("HR=",hr.test),pos=2)
+text(x=xmax,y=0.85,lab=paste("p=",p.test,"",sep=""),pos=2)
+tmp <- summary(preds.test.dichot)
+text(x=c(xmax,xmax),y=c(0.7,0.6),lab=paste(tmp,names(tmp)),col=1:2,pos=2)
+}
+\keyword{ regression }
+\keyword{ survival }
