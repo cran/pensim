@@ -15,6 +15,7 @@ create.data(nvars = c(100, 100, 100, 100, 600),
             associations = c(0.5, 0.5, 0.3, 0.3, 0),
             firstonly = c(TRUE, FALSE, TRUE, FALSE, FALSE),
             nsamples = 100,
+            labelswapprob = 0,
             response = "timetoevent",
             basehaz = 0.2,
             logisticintercept = 0)
@@ -32,6 +33,11 @@ create.data(nvars = c(100, 100, 100, 100, 600),
     of each type is associated with outcome (TRUE) or all variables of that
     type (FALSE)}
   \item{nsamples}{an integer giving the number of observations}
+  \item{labelswapprob}{This provides an option to add uncertainty to
+    binary outcomes by randomly switching labels with probability
+    labelswapprob.  The probability of a label being swapped is
+    independent for each observation.  The value is ignored if
+    response is "timetoevent"}
   \item{response}{either "timetoevent" or "binary"}
   \item{basehaz}{baseline hazard, used for "timetoevent"}
   \item{logisticintercept}{intercept which is added to X\%*\%Beta for "binary"}
@@ -56,7 +62,7 @@ create.data(nvars = c(100, 100, 100, 100, 600),
   Response is the last column.}
 }
 \references{
-Waldron L., Pintilie M., Huttenhower C.*, and Jurisica I.*   Optimized
+Waldron L., Pintilie M., Tsao M.-S., Shepherd F. A., Huttenhower C.*, and Jurisica I.*   Optimized
 application of penalized regression methods to diverse genomic
 data. (2010). Under review.  (*equal contribution)
 }
@@ -75,7 +81,7 @@ summary(x)
 x$summary
 model <- glm(outcome ~ ., data=x$data,family=binomial)
 summary(model)
-dat <- t(as.matrix(x$data)[,-match("outcome",colnames(x$data))])
+dat <- t(as.matrix(x$data[,-match("outcome",colnames(x$data))]))
 heatmap(dat,ColSideColors=ifelse(x$data$outcome==0,"black","white"))
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the

@@ -73,7 +73,7 @@ opt2D(nsim,
   The matrix contains one row for each repeat of the regression.
 }
 \references{
-Waldron L., Pintilie M., Huttenhower C.*, and Jurisica I.*   Optimized
+Waldron L., Pintilie M., Tsao M.-S., Shepherd F. A., Huttenhower C.*, and Jurisica I.*   Optimized
 application of penalized regression methods to diverse genomic
 data. (2010). Under review.  (*equal contribution)
 }

@@ -62,7 +62,7 @@ scan.l1l2(L1range = c(0.1, 100.1),
   \item{note}{A note to the user that rows of cvl correspond to values of lambda1, columns to lambda2}
 }
 \references{
-  Waldron L., Pintilie M., Huttenhower C.*, and Jurisica I.*   Optimized
+  Waldron L., Pintilie M., Tsao M.-S., Shepherd F. A., Huttenhower C.*, and Jurisica I.*   Optimized
   application of penalized regression methods to diverse genomic
   data. (2010). Under review.  (*equal contribution)
 }

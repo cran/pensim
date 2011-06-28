@@ -1,0 +1,6 @@
+1.0.1: Initial version to CRAN
+
+1.0.2: Formatting changes to make documentation look better.
+
+1.0.3: Updated author list, added labelswapprob option and extra checking of
+user input to create.data().
