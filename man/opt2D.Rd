@@ -99,32 +99,32 @@ gene.quant <- apply(beer.exprs,1,quantile,probs=0.75)
 dat.filt <- beer.exprs[gene.quant>log2(150),]
 gene.iqr <- apply(dat.filt,1,IQR)
 dat.filt <- as.matrix(dat.filt[gene.iqr>1,])
-dat.final <- scale(t(dat.filt))  #only 151 genes left
+dat.filt <- t(dat.filt)
 
 ##define training and test sets
 set.seed(9)
-trainingset <- sample(rownames(dat.final),round(nrow(dat.final)/2))
-testset <- rownames(dat.final)[!rownames(dat.final)\%in\%trainingset]
+trainingset <- sample(rownames(dat.filt),round(nrow(dat.filt)/2))
+testset <- rownames(dat.filt)[!rownames(dat.filt)\%in\%trainingset]
 
-dat.training <- data.frame(dat.final[trainingset,])
+dat.training <- data.frame(dat.filt[trainingset,])
 pheno.training <- beer.survival[trainingset,]
 
 library(survival)
 surv.training <- Surv(pheno.training$os,pheno.training$status)
 
-dat.test <- data.frame(dat.final[testset,])
+dat.test <- data.frame(dat.filt[testset,])
 all.equal(colnames(dat.training),colnames(dat.test))
 pheno.test <- beer.survival[testset,]
 surv.test <- Surv(pheno.test$os,pheno.test$status)
 
 library(penalized)
-set.seed(10)
-
-system.time(output <- opt2D(nsim=10, L1range=c(0.01,200),L2range=c(0.01,200), dofirst="both", nprocessors=8, response=surv.training,penalized=dat.training, fold=10,positive=FALSE,standardize=FALSE))
+set.seed(1)
+##ideally set nsim=50, fold=10, but this takes 100x longer.
+system.time(output <- opt2D(nsim=1, L1range=c(0.01,10),L2range=c(0.01,200), dofirst="both", nprocessors=1, response=surv.training,penalized=dat.training, fold=5,positive=FALSE,standardize=TRUE))
 
 cc <- output[which.max(output[,"cvl"]),-1:-5]
 output[which.max(output[,"cvl"]),1:5]  #small L1, large L2
-sum(abs(cc)>0)  #all 151 coefficients are non-zero
+sum(abs(cc)>0)  #number of non-zero coefficients
 
 
 preds.training <- as.matrix(dat.training) \%*\% cc
@@ -146,6 +146,7 @@ summary(coxphfit.test)
 (hr.training <- signif(summary(coxphfit.training)$conf.int[1],2))
 (hr.lower.training <- summary(coxphfit.training)$conf.int[3])
 (hr.upper.training <- summary(coxphfit.training)$conf.int[4])
+par(mfrow=c(1,2))
 plot(survfit.training[2],
      conf.int=FALSE,
      xlab="Months",
@@ -153,11 +154,11 @@ plot(survfit.training[2],
      ylab="Overall survival",
      col="red")
 lines(survfit.training[1],col="black")
-xmax <- par("usr")[2]
-text(x=xmax,y=0.9,lab=paste("HR=",hr.training),pos=2)
-text(x=xmax,y=0.8,lab=paste("p=",p.training,"",sep=""),pos=2)
+xmax <- par("usr")[2]-5
+text(x=xmax,y=0.35,lab=paste("HR=",hr.training),pos=2)
+text(x=xmax,y=0.3,lab=paste("p=",p.training,"",sep=""),pos=2)
 tmp <- summary(preds.training.dichot)
-text(x=c(xmax,xmax),y=c(0.7,0.6),lab=paste(tmp,names(tmp)),col=1:2,pos=2)
+text(x=c(xmax,xmax),y=c(0.25,0.2),lab=paste(tmp,names(tmp)),col=1:2,pos=2)
 ## now the test set.
 ## in the test set, HR=1.7 is not significant - not surprising with the
 ## overly strict non-specific pre-filter (IQR>1, 75th percentile > log2(150)
@@ -172,10 +173,10 @@ plot(survfit.test[2],
      col="red")
 lines(survfit.test[1],col="black")
 xmax <- par("usr")[2]
-text(x=xmax,y=0.95,lab=paste("HR=",hr.test),pos=2)
-text(x=xmax,y=0.85,lab=paste("p=",p.test,"",sep=""),pos=2)
+text(x=xmax,y=0.35,lab=paste("HR=",hr.test),pos=2)
+text(x=xmax,y=0.3,lab=paste("p=",p.test,"",sep=""),pos=2)
 tmp <- summary(preds.test.dichot)
-text(x=c(xmax,xmax),y=c(0.7,0.6),lab=paste(tmp,names(tmp)),col=1:2,pos=2)
+text(x=c(xmax,xmax),y=c(0.25,0.2),lab=paste(tmp,names(tmp)),col=1:2,pos=2)
 }
 
 \keyword{ regression }

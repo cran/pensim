@@ -67,31 +67,32 @@ gene.quant <- apply(beer.exprs,1,quantile,probs=0.75)
 dat.filt <- beer.exprs[gene.quant>log2(100),]
 gene.iqr <- apply(dat.filt,1,IQR)
 dat.filt <- as.matrix(dat.filt[gene.iqr>0.5,])
-dat.final <- scale(t(dat.filt))
+dat.filt <- t(dat.filt)
 
 ##define training and test sets
-set.seed(9)
-trainingset <- sample(rownames(dat.final),round(nrow(dat.final)/2))
-testset <- rownames(dat.final)[!rownames(dat.final)\%in\%trainingset]
+set.seed(1)
+trainingset <- sample(rownames(dat.filt),round(nrow(dat.filt)/2))
+testset <- rownames(dat.filt)[!rownames(dat.filt)\%in\%trainingset]
 
-dat.training <- data.frame(dat.final[trainingset,])
+dat.training <- data.frame(dat.filt[trainingset,])
 pheno.training <- beer.survival[trainingset,]
 
 library(survival)
 surv.training <- Surv(pheno.training$os,pheno.training$status)
 
-
-dat.test <- data.frame(dat.final[testset,])
+dat.test <- data.frame(dat.filt[testset,])
 all.equal(colnames(dat.training),colnames(dat.test))
 pheno.test <- beer.survival[testset,]
 surv.test <- Surv(pheno.test$os,pheno.test$status)
 
 library(penalized)
-set.seed(10)
-system.time(output <- opt1D(nsim=50,nprocessors=8,setpen="L1",response=surv.training,penalized=dat.training,fold=10,positive=FALSE,standardize=FALSE,minlambda1=3))
+##ideally nsim should be on the order of 50, but this slows computation
+##50x without parallelization.
+set.seed(2)
+system.time(output <- opt1D(nsim=1,nprocessors=1,setpen="L1",response=surv.training,penalized=dat.training,fold=10,positive=FALSE,standardize=TRUE,minlambda1=3))
 
 cc <- output[which.max(output[,"cvl"]),-(1:2)]  #coefficients
-sum(abs(cc)>0)  #14 are non-zero
+sum(abs(cc)>0)  #count non-zero coefficients
 
 preds.training <- as.matrix(dat.training) \%*\% cc
 preds.training.median <- median(preds.training)
@@ -112,6 +113,7 @@ summary(coxphfit.test)
 (hr.training <- signif(summary(coxphfit.training)$conf.int[1],2))
 (hr.lower.training <- summary(coxphfit.training)$conf.int[3])
 (hr.upper.training <- summary(coxphfit.training)$conf.int[4])
+par(mfrow=c(1,2))
 plot(survfit.training[2],
      conf.int=FALSE,
      xlab="Months",
@@ -135,10 +137,10 @@ plot(survfit.test[2],
      col="red")
 lines(survfit.test[1],col="black")
 xmax <- par("usr")[2]
-text(x=xmax,y=0.95,lab=paste("HR=",hr.test),pos=2)
-text(x=xmax,y=0.85,lab=paste("p=",p.test,"",sep=""),pos=2)
+text(x=xmax,y=0.55,lab=paste("HR=",hr.test),pos=2)
+text(x=xmax,y=0.45,lab=paste("p=",p.test,"",sep=""),pos=2)
 tmp <- summary(preds.test.dichot)
-text(x=c(xmax,xmax),y=c(0.7,0.6),lab=paste(tmp,names(tmp)),col=1:2,pos=2)
+text(x=c(xmax,xmax),y=c(0.3,0.2),lab=paste(tmp,names(tmp)),col=1:2,pos=2)
 }
 \keyword{ regression }
 \keyword{ survival }

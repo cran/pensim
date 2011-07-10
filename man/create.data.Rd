@@ -15,6 +15,7 @@ create.data(nvars = c(100, 100, 100, 100, 600),
             associations = c(0.5, 0.5, 0.3, 0.3, 0),
             firstonly = c(TRUE, FALSE, TRUE, FALSE, FALSE),
             nsamples = 100,
+            censoring = "none",
             labelswapprob = 0,
             response = "timetoevent",
             basehaz = 0.2,
@@ -33,6 +34,8 @@ create.data(nvars = c(100, 100, 100, 100, 600),
     of each type is associated with outcome (TRUE) or all variables of that
     type (FALSE)}
   \item{nsamples}{an integer giving the number of observations}
+  \item{censoring}{"none" for no censoring, or a vector of length two c(a,b)
+    for uniform U(a,b) censoring.}
   \item{labelswapprob}{This provides an option to add uncertainty to
     binary outcomes by randomly switching labels with probability
     labelswapprob.  The probability of a label being swapped is
@@ -59,7 +62,8 @@ create.data(nvars = c(100, 100, 100, 100, 600),
   \item{covariance}{covariance matrix used for
   generating potentially correlated random predictors}
   \item{data}{dataframe containing the predictors and response.
-  Response is the last column.}
+  Response is the last column for binary outcome ("outcome"), and the
+  last two columns for timetoevent outcome ("time" and "cens")}
 }
 \references{
 Waldron L., Pintilie M., Tsao M.-S., Shepherd F. A., Huttenhower C.*, and Jurisica I.*   Optimized
@@ -75,6 +79,7 @@ data. (2010). Under review.  (*equal contribution)
 % %% ~~objects to See Also as \code{\link{help}}, ~~~
 % }
 \examples{
+##binary outcome example
 set.seed(9)
 x <- create.data(nvars=c(15,5),cors=c(0,0.8),associations=c(0,2),firstonly=c(TRUE,TRUE),nsamples=50,response="binary",logisticintercept=0.5)
 summary(x)
@@ -83,8 +88,21 @@ model <- glm(outcome ~ ., data=x$data,family=binomial)
 summary(model)
 dat <- t(as.matrix(x$data[,-match("outcome",colnames(x$data))]))
 heatmap(dat,ColSideColors=ifelse(x$data$outcome==0,"black","white"))
+
+##censored survival outcome example:
+set.seed(1)
+x <- create.data(nvars=c(15,5),
+                 cors=c(0,0.8),
+                 associations=c(0,2),
+                 firstonly=c(TRUE,TRUE),
+                 nsamples=50,
+                 censoring=c(2,10),
+                 response="timetoevent")
+sum(x$data$cens==0)/nrow(x$data)  #34 percent censoring
+
+library(survival)
+surv.obj <- Surv(x$data$time,x$data$cens)
+plot(survfit(surv.obj~1),ylab="Survival probability",xlab="time")
 }
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{ datagen }
 \keyword{ survival }

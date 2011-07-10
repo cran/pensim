@@ -7,22 +7,22 @@ Functions and data for simulation of high-dimensional data and parallelized repe
 }
 \description{
 Simulation of continuous, correlated high-dimensional data with
-time-to-event or binary response, and parallelized functions Lasso,
-Ridge, and Elastic Net penalized regression.
+time-to-event or binary response, and parallelized functions for Lasso,
+Ridge, and Elastic Net penalized regression model training and
+validation by split-sample or nested cross-validation.
 }
 \details{
 \tabular{ll}{
 Package: \tab pensim\cr
 Type: \tab Package\cr
-Version: \tab 1.0\cr
-Date: \tab 2011-01-20\cr
+Version: \tab 1.1.3\cr
+Date: \tab 2011-07-10\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
 }
-This package contains a function for simulation of correlated
-high-dimensional data with binary or time-to-event response, and
-functions for parallelized repeated optimizations of Lasso, Ridge, and
-Elastic Net penalized regression penalties.
+Model training and validation by Lasso, Ridge, and Elastic Net penalized
+regression.   This package also contains a function for simulation of correlated
+high-dimensional data with binary or time-to-event response.
 }
 \author{
 Levi Waldron
@@ -53,6 +53,6 @@ x$summary
 pen.data <- x$data[,-match("outcome",colnames(x$data))]
 response <- x$data[,match("outcome",colnames(x$data))]
 ##lasso regression
-output <- opt1D(nsim=10,nprocessors=2,penalized=pen.data,response=response)
+output <- opt1D(nsim=10,nprocessors=1,penalized=pen.data,response=response)
 cc <- output[which.max(output[,"cvl"]),-1:-3]  ##non-zero b.* are true positives
 }

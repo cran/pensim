@@ -4,6 +4,7 @@ create.data <-
               associations = c(0.5, 0.5, 0.3, 0.3, 0),
               firstonly = c(TRUE,FALSE, TRUE, FALSE, FALSE),
               nsamples = 100,
+              censoring = "none",
               labelswapprob = 0,
               response = "timetoevent",
               basehaz = 0.2,
@@ -56,6 +57,15 @@ create.data <-
         h = basehaz * exp(betaX[, 1])
         x.out$time <- rexp(length(h), h)
         x.out$cens <- 1
+        if(class(censoring)=="numeric" | class(censoring)=="integer"){
+          if(length(censoring)==2){
+            censtimes <- runif(length(h),min=censoring[1],max=censoring[2])
+          }else if(length(censoring)==1){
+            censtimes <- rep(censoring,length(h))
+          }
+          x.out$cens[x.out$time>censtimes] <- 0
+          x.out$time[x.out$time>censtimes] <- censtimes[x.out$time>censtimes]
+        }
     }
     else if (identical(response, "binary")) {
         p <- 1/(1 + exp(-(betaX + logisticintercept)))

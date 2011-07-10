@@ -86,28 +86,28 @@ gene.quant <- apply(beer.exprs,1,quantile,probs=0.75)
 dat.filt <- beer.exprs[gene.quant>log2(150),]
 gene.iqr <- apply(dat.filt,1,IQR)
 dat.filt <- as.matrix(dat.filt[gene.iqr>1,])
-dat.final <- scale(t(dat.filt))
+dat.filt <- t(dat.filt)
 
 ##define training and test sets
 set.seed(9)
-trainingset <- sample(rownames(dat.final),round(nrow(dat.final)/2))
-testset <- rownames(dat.final)[!rownames(dat.final)\%in\%trainingset]
+trainingset <- sample(rownames(dat.filt),round(nrow(dat.filt)/2))
+testset <- rownames(dat.filt)[!rownames(dat.filt)\%in\%trainingset]
 
-dat.training <- data.frame(dat.final[trainingset,])
+dat.training <- data.frame(dat.filt[trainingset,])
 pheno.training <- beer.survival[trainingset,]
 
 library(survival)
 surv.training <- Surv(pheno.training$os,pheno.training$status)
 
-dat.test <- data.frame(dat.final[testset,])
+dat.test <- data.frame(dat.filt[testset,])
 all.equal(colnames(dat.training),colnames(dat.test))
 pheno.test <- beer.survival[testset,]
 surv.test <- Surv(pheno.test$os,pheno.test$status)
 
 set.seed(9)
-system.time(output <- scan.l1l2(L1range=c(0.2,10.2),L2range=c(2,50),
-L1.ngrid=20,L2.ngrid=50,polydegree=1,nprocessors=2,
-response=surv.training, penalized=dat.training, fold=4,positive=FALSE,standardize=FALSE))
+system.time(output <- scan.l1l2(L1range=c(0.2,3.2),L2range=c(2,30),
+L1.ngrid=10,L2.ngrid=10,polydegree=1,nprocessors=1,
+response=surv.training, penalized=dat.training, fold=4,positive=FALSE,standardize=TRUE))
 
 ##Note that the cvl surface is not smooth because a different folding of
 ##the data was used for each cvl calculation
