@@ -1,0 +1,24 @@
+citHeader("To cite the pensim package in publications use the
+following.  You should also cite the penalized package, as recommended
+by citation(penalized).")
+
+citEntry(entry="Article",
+	title = "Optimized application of penalized regression methods to diverse genomic data",
+	author = c(person("Waldron, Levi"),
+	       person("Pintilie, Melania"),
+               person("Tsao, {Ming-Sound}"),
+               person("Shepherd, Frances A"),
+               person("Huttenhower, Curtis"),
+               person("Jurisica, Igor")),
+	year = "2011",
+	journal = "Bioinformatics",
+	volume = 27,
+	number = 24,
+	doi = "10.1093/bioinformatics/btr591",
+	note = "PMID: 22156367",
+	pages = "3399--3406",
+        textVersion =
+      paste("Levi Waldron, Melania Pintilie, Ming-Sound Tsao, Frances Shepherd, Curtis Huttenhower, and Igor Jurisica (2011).",
+		"Optimized application of penalized regression methods to diverse genomic data,",
+        	"Bioinformatics, 27 (24) 3399-3406.")
+)

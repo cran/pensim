@@ -43,9 +43,9 @@ opt1D(nsim = 50, nprocessors = 1, setpen = "L1", ...)
 }
 
 \references{
-Waldron L., Pintilie M., Tsao M.-S., Shepherd F. A., Huttenhower C.*, and Jurisica I.*   Optimized
-application of penalized regression methods to diverse genomic
-data. (2010). Under review.  (*equal contribution)
+  Waldron L, Pintilie M, Tsao M-S, Shepherd FA, Huttenhower C*, Jurisica
+  I*: Optimized application of penalized regression methods to diverse
+  genomic data. Bioinformatics 2011, 27:3399-3406.  (*equal contribution)
 }
 \author{
 Levi Waldron et al.

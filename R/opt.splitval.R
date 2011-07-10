@@ -33,11 +33,10 @@ opt.splitval <-
       extra.vars$unpenalized <- unpenalized.training
     }
     ##regression call:
-    output <- do.call(get(optFUN),args=extra.vars)
-    ##coefficients:
     output <- do.call(get(optFUN), args = extra.vars)
+    ##coefficients:
     cc <- output[which.max(output[, "cvl"]),]
-    cc <- cc[match(colnames(extra.vars$penalized),names(cc))]
+    cc <- cc[-na.omit(match(c("L1","L2","cvl","convergence","fncalls"),names(cc)))]
     ##predictions in test set:
     if("unpenalized" %in% names(extra.vars)){
       dat.test <- cbind(unpenalized.test,penalized.test)

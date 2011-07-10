@@ -14,7 +14,8 @@ function(L1range=c(0.1,100.1),L2range=c(0.1,100.1),L1.ngrid=50,L2.ngrid=50,nproc
     library(rlecuyer)
     cl <- makeCluster(nprocessors, type="SOCK")
     myseed=round(2^32*runif(6)) #rlecuyer wants a vector of six seeds according to the SNOW manual
-    clusterSetupRNG(cl,seed=myseed)
+    tmp <- try(clusterSetupRNG(cl,seed=myseed))
+    if(class(tmp) == "try-error") warning("rlecuyer is not properly configured on your system; child nodes may not produce random numbers independently.  Debug using rlecuyer examples if you are concerned about this, or use leave-one-out cross-validation.")
   }
   #create the L1 and L2 sequences
   L1vals <- seq(L1range[1]^(1/polydegree),L1range[2]^(1/polydegree),length.out=L1.ngrid)^polydegree

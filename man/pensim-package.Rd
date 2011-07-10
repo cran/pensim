@@ -9,14 +9,15 @@ Functions and data for simulation of high-dimensional data and parallelized repe
 Simulation of continuous, correlated high-dimensional data with
 time-to-event or binary response, and parallelized functions for Lasso,
 Ridge, and Elastic Net penalized regression model training and
-validation by split-sample or nested cross-validation.
+validation by split-sample or nested cross-validation.  See the help
+page for opt.nested.crossval() for the most extensive usage examples.
 }
 \details{
 \tabular{ll}{
 Package: \tab pensim\cr
 Type: \tab Package\cr
-Version: \tab 1.1.3\cr
-Date: \tab 2011-07-10\cr
+Version: \tab 1.1.4\cr
+Date: \tab 2012-01-21\cr
 License: \tab GPL (>=2)\cr
 LazyLoad: \tab yes\cr
 }
@@ -30,9 +31,9 @@ Levi Waldron
 Maintainer: Levi Waldron <lwaldron.research@gmail.com>
 }
 \references{
-  Waldron L., Pintilie M., Tsao M.-S., Shepherd F. A., Huttenhower C.*, and Jurisica I.*   Optimized
-  application of penalized regression methods to diverse genomic
-  data. (2010). Under review.  (*equal contribution)
+  Waldron L, Pintilie M, Tsao M-S, Shepherd FA, Huttenhower C*, Jurisica
+  I*: Optimized application of penalized regression methods to diverse
+  genomic data. Bioinformatics 2011, 27:3399-3406.  (*equal contribution)
 }
 \keyword{ package }
 \keyword{ survival }
