@@ -2,8 +2,8 @@ Package: pensim
 Type: Package
 Title: Simulation of high-dimensional data and parallelized repeated
         penalized regression
-Version: 1.1.4
-Date: 2011-07-10
+Version: 1.2.1
+Date: 2012-01-22
 Author: L. Waldron, M. Pintilie, M.-S. Tsao, F. A. Shepherd, C.
         Huttenhower*, I. Jurisica* (*equal contribution)
 Maintainer: Levi Waldron <lwaldron.research@gmail.com>
@@ -16,6 +16,6 @@ Description: Simulation of continuous, correlated high-dimensional data
         the Elastic Net.
 License: GPL (> 2.0)
 LazyLoad: yes
-Packaged: 2012-01-22 01:58:49 UTC; lwaldron
+Packaged: 2012-01-23 15:08:01 UTC; lwaldron
 Repository: CRAN
-Date/Publication: 2012-01-22 07:58:42
+Date/Publication: 2012-01-23 20:02:32

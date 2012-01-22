@@ -14,3 +14,5 @@ user input to create.data().
 1.1.3: Changed opt1D and opt.nested.crossval examples to use less system resources.
 
 1.1.4: Fixed opt.nested.crossval and opt.splitval when using unpenalized covariates, added more examples to opt.nested.crossval, added citations to published paper.  Made it so a broken rlecuyer installation causes a warning instead of an error.
+
+1.2.1: Added package Vignette.

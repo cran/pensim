@@ -1,5 +1,5 @@
-4210748e0effb3876b6494791e0a795e *Changelog
-0a19059362211c13badbff9946be4f2b *DESCRIPTION
+ba3284f29a73571b7d0c6a6431ea9fd0 *Changelog
+3b634a35dfdfc7eb862bee9e83a3ae26 *DESCRIPTION
 c5b0af06707d348096e3bbb749290ab8 *NAMESPACE
 f8172d5e3d99e84e52d38f807a08266e *R/create.data.R
 ec42e467a59acce2cb24b2fea1d00cc2 *R/opt.nested.crossval.R
@@ -11,6 +11,9 @@ ec42e467a59acce2cb24b2fea1d00cc2 *R/opt.nested.crossval.R
 e09512751e9d236783d6dc3c2f6efbf2 *data/beer.survival.rda
 6200be74d384f89293fc0471212ad2d2 *data/datalist
 2a8bc1d38a56f9c26723117d0435993a *inst/CITATION
+9b6c4579f852b867f65d9bbb8ee0f546 *inst/doc/pensim.Rnw
+d909b2178564d80be0d10e2c38fcb9af *inst/doc/pensim.bib
+5ad33a5ac532038b6b02690fbc5ad87b *inst/doc/pensim.pdf
 6485db7580be50eaa44857e23ba9feac *man/beer.exprs.Rd
 4ee968c5af55c81e10e64a83b987ce3b *man/beer.survival.Rd
 aebed8e0ed745458d7d7bf0f3986ff73 *man/create.data.Rd
@@ -18,5 +21,5 @@ aebed8e0ed745458d7d7bf0f3986ff73 *man/create.data.Rd
 ee227a6cf12bfd85de89d5a56aa358ca *man/opt.splitval.Rd
 d3a065bb66ad8e8dea387436dc7f796c *man/opt1D.Rd
 99bb925b8c0f96cfa84a1cc2a81b9d1e *man/opt2D.Rd
-3ac3843bfc1a4ff61be434112532869a *man/pensim-package.Rd
+f48f1a85920d3f285ebfe8513f2e50c8 *man/pensim-package.Rd
 30544f1e11f260bd75df41599c44f7c9 *man/scan.l1l2.Rd
