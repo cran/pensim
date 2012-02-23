@@ -9,7 +9,7 @@ penalized R package, useful for parallelized repeated tuning of the
 penalty parameters.
 }
 \usage{
-opt1D(nsim = 50, nprocessors = 1, setpen = "L1", ...)
+opt1D(nsim = 50, nprocessors = 1, setpen = "L1", cl = NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,6 +21,15 @@ opt1D(nsim = 50, nprocessors = 1, setpen = "L1", ...)
 }
   \item{setpen}{
     Either "L1" (Lasso) or "L2" (Ridge) penalty
+}
+  \item{cl}{
+    Optional cluster object created with the makeCluster() function of
+    the snow package.  If this is not set, pensim calls
+    makeCluster(nprocessors, type="SOCK").   Setting this parameter
+    can enable parallelization in more diverse scenarios than multi-core
+    desktops; see the documentation for the snow package.  Note that if
+    cl is user-defined, this function will not automatically run
+    snow::stopCluster() to shut down the cluster.
 }
   \item{\dots}{
     arguments passed on to optL1 or optL2 function of the penalized R package
@@ -85,7 +94,6 @@ all.equal(colnames(dat.training),colnames(dat.test))
 pheno.test <- beer.survival[testset,]
 surv.test <- Surv(pheno.test$os,pheno.test$status)
 
-library(penalized)
 ##ideally nsim should be on the order of 50, but this slows computation
 ##50x without parallelization.
 set.seed(2)

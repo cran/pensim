@@ -18,7 +18,7 @@
   model with greatest cross-validated likelihood.
 }
 \usage{
-opt.nested.crossval(outerfold=10,nprocessors=1,...)
+opt.nested.crossval(outerfold=10,nprocessors=1,cl=NULL,...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -31,6 +31,15 @@ opt.nested.crossval(outerfold=10,nprocessors=1,...)
     sent to different processors.  If specified in opt.splitval,
     repeated starts for the penalty tuning are sent to different processors.
   }
+  \item{cl}{
+    Optional cluster object created with the makeCluster() function of
+    the snow package.  If this is not set, pensim calls
+    makeCluster(nprocessors, type="SOCK").   Setting this parameter
+    can enable parallelization in more diverse scenarios than multi-core
+    desktops; see the documentation for the snow package.  Note that if
+    cl is user-defined, this function will not automatically run
+    snow::stopCluster() to shut down the cluster.
+}
   \item{\dots}{
     optFUN (either "opt1D" or "opt2D"), scaling (TRUE to z-score
     training data then apply the same shift and scale factors to test

@@ -16,7 +16,9 @@ opt2D(nsim,
       L2range = c(0.001, 100),
       dofirst = "both",
       nprocessors = 1,
-      L1gridsize = 10, L2gridsize = 10, ...)
+      L1gridsize = 10, L2gridsize = 10,
+      cl = NULL,
+      ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -43,6 +45,15 @@ opt2D(nsim,
 }
   \item{L2gridsize}{
     Number of values of the L2 penalty in the regular grid of L1/L2 penalties
+}
+  \item{cl}{
+    Optional cluster object created with the makeCluster() function of
+    the snow package.  If this is not set, pensim calls
+    makeCluster(nprocessors, type="SOCK").   Setting this parameter
+    can enable parallelization in more diverse scenarios than multi-core
+    desktops; see the documentation for the snow package.  Note that if
+    cl is user-defined, this function will not automatically run
+    snow::stopCluster() to shut down the cluster.
 }
   \item{\dots}{
     arguments passed on to optL1 and optL2 (dofirst="L1" or "L2"), or
@@ -117,7 +128,6 @@ all.equal(colnames(dat.training),colnames(dat.test))
 pheno.test <- beer.survival[testset,]
 surv.test <- Surv(pheno.test$os,pheno.test$status)
 
-library(penalized)
 set.seed(1)
 ##ideally set nsim=50, fold=10, but this takes 100x longer.
 system.time(output <- opt2D(nsim=1, L1range=c(0.01,10),L2range=c(0.01,200), dofirst="both", nprocessors=1, response=surv.training,penalized=dat.training, fold=5,positive=FALSE,standardize=TRUE))

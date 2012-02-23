@@ -1,6 +1,5 @@
 scan.l1l2 <-
-function(L1range=c(0.1,100.1),L2range=c(0.1,100.1),L1.ngrid=50,L2.ngrid=50,nprocessors=1,polydegree=1,...){ #... arguments for cvl
-  library(penalized)
+function(L1range=c(0.1,100.1),L2range=c(0.1,100.1),L1.ngrid=50,L2.ngrid=50,nprocessors=1,polydegree=1,cl=NULL,...){ #... arguments for cvl
   #a function for scanning L1 for a given value of L2
   scan.l1 <- function(L2,lambda1vals,...){
     sapply(lambda1vals,
@@ -9,11 +8,14 @@ function(L1range=c(0.1,100.1),L2range=c(0.1,100.1),L1.ngrid=50,L2.ngrid=50,nproc
            },...)
   }
   #set up parallel processing and random number generation
-  if(nprocessors>1){
-    library(snow)
-    library(rlecuyer)
-    cl <- makeCluster(nprocessors, type="SOCK")
+  clusterIsSet <- "cluster" %in% class(cl)
+  if(nprocessors>1 | clusterIsSet){
+    if(!clusterIsSet){
+      nprocessors <- as.integer(round(nprocessors))
+      cl <- makeCluster(nprocessors, type="SOCK")
+    }
     myseed=round(2^32*runif(6)) #rlecuyer wants a vector of six seeds according to the SNOW manual
+    library(rlecuyer)
     tmp <- try(clusterSetupRNG(cl,seed=myseed))
     if(class(tmp) == "try-error") warning("rlecuyer is not properly configured on your system; child nodes may not produce random numbers independently.  Debug using rlecuyer examples if you are concerned about this, or use leave-one-out cross-validation.")
   }
@@ -32,7 +34,6 @@ function(L1range=c(0.1,100.1),L2range=c(0.1,100.1),L1.ngrid=50,L2.ngrid=50,nproc
     L1vals <- L1vals[L1.reorder]
     L2vals <- L2vals[L2.reorder]
     cvl.matrix <- parSapply(cl,L2vals,function(thisL2,...){
-      library(penalized)
       scan.l1(L2=thisL2,lambda1vals=L1vals,...)},
                             ...)
     #now re-rorder things
@@ -40,7 +41,9 @@ function(L1range=c(0.1,100.1),L2range=c(0.1,100.1),L1.ngrid=50,L2.ngrid=50,nproc
     L1vals <- L1vals[order(L1.reorder)]
     L2vals <- L2vals[order(L2.reorder)]
   #shut down the cluster
-    stopCluster(cl)
+    if(!clusterIsSet){
+      stopCluster(cl)
+    }
   }else{
     cvl.matrix <- sapply(L2vals,function(thisL2,...){
       scan.l1(L2=thisL2,lambda1vals=L1vals,...)},...)

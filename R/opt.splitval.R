@@ -1,6 +1,5 @@
 opt.splitval <-
   function(optFUN="opt1D",testset="equal",scaling=TRUE,...){
-    library(pensim)
     extra.vars <- list(...)
     if(testset[1]=="equal"){
       testset <- rep(TRUE,nrow(extra.vars$penalized))
@@ -37,6 +36,11 @@ opt.splitval <-
     ##coefficients:
     cc <- output[which.max(output[, "cvl"]),]
     cc <- cc[-na.omit(match(c("L1","L2","cvl","convergence","fncalls"),names(cc)))]
+    ##does the model have an intercept?
+    if(grepl("(Intercept)",names(cc)[1],fixed=TRUE)){  
+      intercept <- cc[1]
+      cc <- cc[-1]
+    }
     ##predictions in test set:
     if("unpenalized" %in% names(extra.vars)){
       dat.test <- cbind(unpenalized.test,penalized.test)
@@ -45,6 +49,7 @@ opt.splitval <-
       preds.test <- as.matrix(penalized.test) %*% cc
     }
     output <- preds.test[,1]
+    if(exists("intercept")) output <- output + intercept
     names(output) <- rownames(preds.test)
     return(output)
   }

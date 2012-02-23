@@ -17,7 +17,9 @@ scan.l1l2(L1range = c(0.1, 100.1),
           L1.ngrid = 50,
           L2.ngrid = 50,
           nprocessors = 1,
-          polydegree = 1, ...)
+          polydegree = 1,
+          cl = NULL,
+          ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -42,6 +44,15 @@ scan.l1l2(L1range = c(0.1, 100.1),
     power of the polynomial on which the L1/L2 penalty values are fit.
     ie if polydegree=2, penalty values could be y=x^2, x=1,2,3,..., so y=1,4,9,...
   }
+  \item{cl}{
+    Optional cluster object created with the makeCluster() function of
+    the snow package.  If this is not set, pensim calls
+    makeCluster(nprocessors, type="SOCK").   Setting this parameter
+    can enable parallelization in more diverse scenarios than multi-core
+    desktops; see the documentation for the snow package.  Note that if
+    cl is user-defined, this function will not automatically run
+    snow::stopCluster() to shut down the cluster.
+}
   \item{\dots}{
     arguments passed on to cvl function of the penalized R package
   }

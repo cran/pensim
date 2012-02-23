@@ -1,14 +1,3 @@
-# Default NAMESPACE created by R
-# Remove the previous line if you edit this file
-
-# Export all names
-exportPattern(".")
-
-# Import all packages listed as Imports or Depends
-import(
-  MASS,
-  snow,
-  rlecuyer,
-  penalized,
-  survival
-)
+importFrom(snow, makeCluster, stopCluster)
+importFrom(penalized, optL1, optL2, cvl, coefficients)
+export(opt1D, opt2D, opt.nested.crossval, create.data, opt.splitval, scan.l1l2)

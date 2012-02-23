@@ -1,8 +1,6 @@
 opt2D <-
-function(nsim,L1range=c(0.001,100),L2range=c(0.001,100),dofirst="both",nprocessors=1,L1gridsize=10,L2gridsize=10,...){
+function(nsim,L1range=c(0.001,100),L2range=c(0.001,100),dofirst="both",nprocessors=1,L1gridsize=10,L2gridsize=10,cl=NULL,...){
   opt.L1L2 <- function(lambdarange,...){
-    library(penalized)
-    library(survival)
     minL1 <- min(lambdarange[1:2])
     maxL1 <- max(lambdarange[1:2])
     minL2 <- min(lambdarange[3:4])
@@ -23,8 +21,6 @@ function(nsim,L1range=c(0.001,100),L2range=c(0.001,100),dofirst="both",nprocesso
     }      
   }
   opt.L2L1 <- function(lambdarange,...){
-    library(penalized)
-    library(survival)
     minL1 <- min(lambdarange[1:2])
     maxL1 <- max(lambdarange[1:2])
     minL2 <- min(lambdarange[3:4])
@@ -48,8 +44,6 @@ function(nsim,L1range=c(0.001,100),L2range=c(0.001,100),dofirst="both",nprocesso
     #lambdarange[1:2] to be boundaries for lambda1,
     #lambdarange[3:4] to be boundaries for lambda2
     #lambdarange[5:6] to be the starting point for optimization,
-    library(penalized)
-    library(survival)
     getfolds <- function(N,nfolds){
       evenly <- nfolds * N%/%nfolds
       extras <- N - evenly
@@ -150,16 +144,21 @@ function(nsim,L1range=c(0.001,100),L2range=c(0.001,100),dofirst="both",nprocesso
     #randomly sample the top 5 positions to provide starting points for the nsim optimizations
     looplist <- sample(top.positions,nsim,replace=TRUE)
   }else stop("dofirst must be one of L1, L2, or both")
-  if(nprocessors>1){
-    library(snow)
-    library(rlecuyer)
-    cl <- makeCluster(nprocessors, type="SOCK")
+  clusterIsSet <- "cluster" %in% class(cl)
+  if(nprocessors>1 | clusterIsSet){
+    if(!clusterIsSet){
+      nprocessors <- as.integer(round(nprocessors))
+      cl <- makeCluster(nprocessors, type="SOCK")
+    }
     myseed=round(2^32*runif(6)) #rlecuyer wants a vector of six seeds according to the SNOW manual
+    library(rlecuyer)
     tmp <- try(clusterSetupRNG(cl,seed=myseed))
     if(class(tmp) == "try-error") warning("rlecuyer is not properly configured on your system; child nodes may not produce random numbers independently.  Debug using rlecuyer examples if you are concerned about this, or use leave-one-out cross-validation.")
 print(paste("beginning simulations on",nprocessors,"processors..."))
     output <- parSapply(cl,looplist,function(x,...){FUN(x,...)},...)
-    stopCluster(cl)
+    if(!clusterIsSet){
+      stopCluster(cl)
+    }
   } else{
     print("beginning simulations on one processor...")
     output <- sapply(looplist,function(x,...){FUN(x,...)},...)
