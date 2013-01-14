@@ -13,9 +13,6 @@ data(beer.exprs)
 \format{
   A data frame with 7129 probe sets (rows) for 86 patients (columns)
 }
-\details{
-%%  ~~ If necessary, more details than the __description__ above ~~
-}
 \source{
   Beer DG, Kardia SL, Huang C, Giordano TJ, Levin AM, Misek DE, Lin L, Chen G, Gharib TG, Thomas DG, Lizyness ML, Kuick R, Hayasaka S, Taylor JM, Iannettoni MD, Orringer MB, Hanash S: Gene-expression profiles predict survival of patients with lung adenocarcinoma. Nat Med 2002, 8:816-824. 
 }

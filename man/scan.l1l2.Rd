@@ -87,14 +87,18 @@ scan.l1l2(L1range = c(0.1, 100.1),
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+cvl
 }
 \examples{
 data(beer.exprs)
 data(beer.survival)
 
-gene.quant <- apply(beer.exprs,1,quantile,probs=0.75)
-dat.filt <- beer.exprs[gene.quant>log2(150),]
+##select just 250 genes to speed computation:
+set.seed(1)
+beer.exprs.sample <- beer.exprs[sample(1:nrow(beer.exprs), 250), ]
+
+gene.quant <- apply(beer.exprs.sample,1,quantile,probs=0.75)
+dat.filt <- beer.exprs.sample[gene.quant>log2(150),]
 gene.iqr <- apply(dat.filt,1,IQR)
 dat.filt <- as.matrix(dat.filt[gene.iqr>1,])
 dat.filt <- t(dat.filt)

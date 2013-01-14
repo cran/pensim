@@ -94,7 +94,7 @@ function(nsim,L1range=c(0.001,100),L2range=c(0.001,100),dofirst="both",nprocesso
                      #factr=1e12 for very fast convergence -  1e10 or 11 for very accurate
                      control=list(fnscale=-1,maxit=50,factr=1e11,trace=0)))  #trace=6 for full info
     if(class(opt.out)=="try-error"){
-      output <- rep(NA,nrow(penalized)+5)
+      output <- rep(NA,nrow(myargs$penalized)+5)
       names(output) <- c("L1","L2","cvl","convergence","fncalls",rownames(myargs$penalized))
     }else{
       L1 <- opt.out$par[1]
@@ -148,10 +148,10 @@ function(nsim,L1range=c(0.001,100),L2range=c(0.001,100),dofirst="both",nprocesso
   if(nprocessors>1 | clusterIsSet){
     if(!clusterIsSet){
       nprocessors <- as.integer(round(nprocessors))
+      library(snow)
       cl <- makeCluster(nprocessors, type="SOCK")
     }
     myseed=round(2^32*runif(6)) #rlecuyer wants a vector of six seeds according to the SNOW manual
-    library(rlecuyer)
     tmp <- try(clusterSetupRNG(cl,seed=myseed))
     if(class(tmp) == "try-error") warning("rlecuyer is not properly configured on your system; child nodes may not produce random numbers independently.  Debug using rlecuyer examples if you are concerned about this, or use leave-one-out cross-validation.")
 print(paste("beginning simulations on",nprocessors,"processors..."))

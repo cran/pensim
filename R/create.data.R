@@ -25,7 +25,6 @@ create.data <-
     if (length(nvars) != length(cors) | length(nvars) != length(firstonly) |
         length(nvars) != length(associations))
         stop("nvars, cors, firstonly, and associations must all have the same length.")
-    library(MASS)
     x.out <- matrix(0, ncol = sum(nvars), nrow = nsamples)
     definecors <- data.frame(start = c(1, cumsum(nvars[-length(nvars)]) +
                              1), end = cumsum(nvars), cors = cors, associations = associations,

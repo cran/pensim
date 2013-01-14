@@ -5,10 +5,10 @@ function(nsim=50,nprocessors=1,setpen="L1",cl=NULL,...){
   if(nprocessors>1 | clusterIsSet){
     if(!clusterIsSet){
       nprocessors <- as.integer(round(nprocessors))
+      library(snow)
       cl <- makeCluster(nprocessors, type="SOCK")
     }
     myseed=round(2^32*runif(6)) ##rlecuyer wants a vector of six seeds according to the SNOW manual
-    library(rlecuyer)
     tmp <- try(clusterSetupRNG(cl,seed=myseed))
     if(class(tmp) == "try-error") warning("rlecuyer is not properly configured on your system; child nodes may not produce random numbers independently.  Debug using rlecuyer examples if you are concerned about this, or use leave-one-out cross-validation.")
     if(identical(setpen,"L1")){
@@ -19,7 +19,6 @@ function(nsim=50,nprocessors=1,setpen="L1",cl=NULL,...){
       thisopt <- parLapply(cl,1:nsim,function(n,...){
         optL2(...)
       },...)
-###      thisopt <- parLapply(cl,1:nsim,function(n,...) optL2(...),...)
     }
     if(!clusterIsSet){
       stopCluster(cl)

@@ -113,8 +113,12 @@ opt.nested.crossval(outerfold=10,nprocessors=1,cl=NULL,...)
 data(beer.exprs)
 data(beer.survival)
 
-gene.quant <- apply(beer.exprs,1,quantile,probs=0.75)
-dat.filt <- beer.exprs[gene.quant>log2(100),]
+##select just 250 genes to speed computation:
+set.seed(1)
+beer.exprs.sample <- beer.exprs[sample(1:nrow(beer.exprs), 250), ]
+
+gene.quant <- apply(beer.exprs.sample,1,quantile,probs=0.75)
+dat.filt <- beer.exprs.sample[gene.quant>log2(100),]
 gene.iqr <- apply(dat.filt,1,IQR)
 dat.filt <- as.matrix(dat.filt[gene.iqr>0.5,])
 dat.filt <- t(dat.filt)
@@ -125,6 +129,7 @@ surv.obj <- Surv(beer.survival$os,beer.survival$status)
 
 ## First, test the regression arguments using functions from
 ## the penalized package:
+library(penalized)
 testfit <- optL1(response=surv.obj,
                  penalized=dat.filt,
                  fold=5,

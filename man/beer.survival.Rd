@@ -16,13 +16,11 @@ Survival data for Beer et al. (2002) lung adenocarcinoma study
     \item{\code{os}}{a numeric vector}
   }
 }
-\details{
-%%  ~~ If necessary, more details than the __description__ above ~~
-}
 \source{
-Beer DG, Kardia SL, Huang C, Giordano TJ, Levin AM, Misek DE, Lin L, Chen G, Gharib TG, Thomas DG, Lizyness ML, Kuick R, Hayasaka S, Taylor JM, Iannettoni MD, Orringer MB, Hanash S: Gene-expression profiles predict survival of patients with lung adenocarcinoma. Nat Med 2002, 8:816-824.
-}
-\references{
+Beer DG, Kardia SL, Huang C, Giordano TJ, Levin AM, Misek DE, Lin L,
+Chen G, Gharib TG, Thomas DG, Lizyness ML, Kuick R, Hayasaka S, Taylor
+JM, Iannettoni MD, Orringer MB, Hanash S: Gene-expression pr
+ofiles predict survival of patients with lung adenocarcinoma. Nat Med 2002, 8:816-824.
 }
 \examples{
 data(beer.survival)

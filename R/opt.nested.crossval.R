@@ -17,10 +17,10 @@ opt.nested.crossval <-
   if(nprocessors>1 | clusterIsSet){
       if(!clusterIsSet){
         nprocessors <- as.integer(round(nprocessors))
+        library(snow)
         cl <- makeCluster(nprocessors, type="SOCK")
       }
       myseed=round(2^32*runif(6)) ##rlecuyer wants a vector of six seeds according to the SNOW manual
-      library(rlecuyer)
       tmp <- try(clusterSetupRNG(cl,seed=myseed))
       if(class(tmp) == "try-error") warning("rlecuyer is not properly configured on your system; child nodes may not produce random numbers independently.  Debug using rlecuyer examples if you are concerned about this, or use leave-one-out cross-validation.")
       ##do the nested cross-validation

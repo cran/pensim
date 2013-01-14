@@ -22,3 +22,6 @@ user input to create.data().
 1.2.3: Created proper NAMESPACE and cleaned up thereby unneeded library() calls.  Note that rlecuyer has no NAMESPACE so still relies on library calls.
 
 1.2.4: Fixed bug that occurred when the model had an intercept (non-survival models).
+
+1.2.5: Fixed new problems introduced by imports in NAMESPACE, added
+tests of opt.nested.crossval().

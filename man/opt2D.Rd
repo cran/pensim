@@ -98,16 +98,20 @@ Depends on the R packages: penalized, snow, rlecuyer
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
 \seealso{
-%% ~~objects to See Also as \code{\link{help}}, ~~~
+optL1, optL2, cvl
 }
 \examples{
 data(beer.exprs)
 data(beer.survival)
 
+##select just 250 genes to speed computation:
+set.seed(1)
+beer.exprs.sample <- beer.exprs[sample(1:nrow(beer.exprs), 250), ]
+
 ##apply an unreasonably strict gene filter here to speed computation
 ##time for the Elastic Net example.
-gene.quant <- apply(beer.exprs,1,quantile,probs=0.75)
-dat.filt <- beer.exprs[gene.quant>log2(150),]
+gene.quant <- apply(beer.exprs.sample,1,quantile,probs=0.75)
+dat.filt <- beer.exprs.sample[gene.quant>log2(150),]
 gene.iqr <- apply(dat.filt,1,IQR)
 dat.filt <- as.matrix(dat.filt[gene.iqr>1,])
 dat.filt <- t(dat.filt)
