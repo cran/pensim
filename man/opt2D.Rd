@@ -48,12 +48,12 @@ opt2D(nsim,
 }
   \item{cl}{
     Optional cluster object created with the makeCluster() function of
-    the snow package.  If this is not set, pensim calls
+    the parallel package.  If this is not set, pensim calls
     makeCluster(nprocessors, type="SOCK").   Setting this parameter
     can enable parallelization in more diverse scenarios than multi-core
-    desktops; see the documentation for the snow package.  Note that if
+    desktops; see the documentation for the parallel package.  Note that if
     cl is user-defined, this function will not automatically run
-    snow::stopCluster() to shut down the cluster.
+    parallel::stopCluster() to shut down the cluster.
 }
   \item{\dots}{
     arguments passed on to optL1 and optL2 (dofirst="L1" or "L2"), or
@@ -92,7 +92,7 @@ opt2D(nsim,
 Levi Waldron et al.
 }
 \note{
-Depends on the R packages: penalized, snow, rlecuyer
+Depends on the R packages: penalized, parallel, rlecuyer
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -104,50 +104,52 @@ optL1, optL2, cvl
 data(beer.exprs)
 data(beer.survival)
 
-##select just 250 genes to speed computation:
+##select just 100 genes to speed computation:
 set.seed(1)
-beer.exprs.sample <- beer.exprs[sample(1:nrow(beer.exprs), 250), ]
+beer.exprs.sample <- beer.exprs[sample(1:nrow(beer.exprs), 100), ]
 
 ##apply an unreasonably strict gene filter here to speed computation
 ##time for the Elastic Net example.
-gene.quant <- apply(beer.exprs.sample,1,quantile,probs=0.75)
-dat.filt <- beer.exprs.sample[gene.quant>log2(150),]
-gene.iqr <- apply(dat.filt,1,IQR)
-dat.filt <- as.matrix(dat.filt[gene.iqr>1,])
+gene.quant <- apply(beer.exprs.sample, 1, quantile, probs=0.75)
+dat.filt <- beer.exprs.sample[gene.quant>log2(150), ]
+gene.iqr <- apply(dat.filt, 1, IQR)
+dat.filt <- as.matrix(dat.filt[gene.iqr>1, ])
 dat.filt <- t(dat.filt)
 
 ##define training and test sets
 set.seed(9)
-trainingset <- sample(rownames(dat.filt),round(nrow(dat.filt)/2))
+trainingset <- sample(rownames(dat.filt), round(nrow(dat.filt)/2))
 testset <- rownames(dat.filt)[!rownames(dat.filt)\%in\%trainingset]
 
-dat.training <- data.frame(dat.filt[trainingset,])
-pheno.training <- beer.survival[trainingset,]
+dat.training <- data.frame(dat.filt[trainingset, ])
+pheno.training <- beer.survival[trainingset, ]
 
 library(survival)
-surv.training <- Surv(pheno.training$os,pheno.training$status)
+surv.training <- Surv(pheno.training$os, pheno.training$status)
 
-dat.test <- data.frame(dat.filt[testset,])
-all.equal(colnames(dat.training),colnames(dat.test))
-pheno.test <- beer.survival[testset,]
-surv.test <- Surv(pheno.test$os,pheno.test$status)
+dat.test <- data.frame(dat.filt[testset, ])
+all.equal(colnames(dat.training), colnames(dat.test))
+pheno.test <- beer.survival[testset, ]
+surv.test <- Surv(pheno.test$os, pheno.test$status)
 
 set.seed(1)
 ##ideally set nsim=50, fold=10, but this takes 100x longer.
-system.time(output <- opt2D(nsim=1, L1range=c(0.01,10),L2range=c(0.01,200), dofirst="both", nprocessors=1, response=surv.training,penalized=dat.training, fold=5,positive=FALSE,standardize=TRUE))
+system.time(output <- opt2D(nsim=1, L1range=c(0.1, 1),
+L2range=c(20, 1000), dofirst="both", nprocessors=1,  
+response=surv.training, penalized=dat.training, fold=5, positive=FALSE, standardize=TRUE))
 
-cc <- output[which.max(output[,"cvl"]),-1:-5]
-output[which.max(output[,"cvl"]),1:5]  #small L1, large L2
+cc <- output[which.max(output[, "cvl"]), -1:-5]
+output[which.max(output[, "cvl"]), 1:5]  #small L1, large L2
 sum(abs(cc)>0)  #number of non-zero coefficients
 
 
 preds.training <- as.matrix(dat.training) \%*\% cc
 preds.training.median <- median(preds.training)
-preds.training.dichot <- ifelse(preds.training > preds.training.median,"high risk","low risk")
-preds.training.dichot <- factor(preds.training.dichot[,1],levels=c("low risk","high risk"))
+preds.training.dichot <- ifelse(preds.training > preds.training.median, "high risk", "low risk")
+preds.training.dichot <- factor(preds.training.dichot[, 1], levels=c("low risk", "high risk"))
 preds.test <- as.matrix(dat.test) \%*\% cc
-preds.test.dichot <- ifelse(preds.test > preds.training.median,"high risk","low risk")
-preds.test.dichot <- factor(preds.test.dichot[,1],levels=c("low risk","high risk"))
+preds.test.dichot <- ifelse(preds.test > preds.training.median, "high risk", "low risk")
+preds.test.dichot <- factor(preds.test.dichot[, 1], levels=c("low risk", "high risk"))
 
 coxphfit.training <- coxph(surv.training~preds.training.dichot)
 survfit.training <- survfit(surv.training~preds.training.dichot)
@@ -156,41 +158,39 @@ coxphfit.test <- coxph(surv.test~preds.test.dichot)
 survfit.test <- survfit(surv.test~preds.test.dichot)
 summary(coxphfit.test)
 
-(p.training <- signif(summary(coxphfit.training)$logtest[3],2))  #likelihood ratio test
-(hr.training <- signif(summary(coxphfit.training)$conf.int[1],2))
+(p.training <- signif(summary(coxphfit.training)$logtest[3], 2))  #likelihood ratio test
+(hr.training <- signif(summary(coxphfit.training)$conf.int[1], 2))
 (hr.lower.training <- summary(coxphfit.training)$conf.int[3])
 (hr.upper.training <- summary(coxphfit.training)$conf.int[4])
-par(mfrow=c(1,2))
-plot(survfit.training[2],
+par(mfrow=c(1, 2))
+plot(survfit.training,
+     col=c("black", "red"),      
      conf.int=FALSE,
      xlab="Months",
      main="TRAINING",
-     ylab="Overall survival",
-     col="red")
-lines(survfit.training[1],col="black")
+     ylab="Overall survival")
 xmax <- par("usr")[2]-5
-text(x=xmax,y=0.35,lab=paste("HR=",hr.training),pos=2)
-text(x=xmax,y=0.3,lab=paste("p=",p.training,"",sep=""),pos=2)
+text(x=xmax, y=0.35, lab=paste("HR=", hr.training), pos=2)
+text(x=xmax, y=0.3, lab=paste("p=", p.training, "", sep=""), pos=2)
 tmp <- summary(preds.training.dichot)
-text(x=c(xmax,xmax),y=c(0.25,0.2),lab=paste(tmp,names(tmp)),col=1:2,pos=2)
+text(x=c(xmax, xmax), y=c(0.25, 0.2), lab=paste(tmp, names(tmp)), col=1:2, pos=2)
 ## now the test set.
-## in the test set, HR=1.7 is not significant - not surprising with the
-## overly strict non-specific pre-filter (IQR>1, 75th percentile > log2(150)
-(p.test <- signif(summary(coxphfit.test)$logtest[3],2))  #likelihood ratio test
-(hr.test <- signif(summary(coxphfit.test)$conf.int[1],2))
+## in the test set,  HR=1.7 is not significant - not surprising with the
+## overly strict non-specific pre-filter (IQR>1,  75th percentile > log2(150)
+(p.test <- signif(summary(coxphfit.test)$logtest[3], 2))  #likelihood ratio test
+(hr.test <- signif(summary(coxphfit.test)$conf.int[1], 2))
 (hr.lower.test <- summary(coxphfit.test)$conf.int[3])
 (hr.upper.test <- summary(coxphfit.test)$conf.int[4])
-plot(survfit.test[2],
-     conf.int=FALSE,
-     xlab="Months",
-     main="TEST",
-     col="red")
-lines(survfit.test[1],col="black")
+plot(survfit.test, 
+     col=c("black",  "red"),  
+     conf.int=FALSE, 
+     xlab="Months", 
+     main="TEST")
 xmax <- par("usr")[2]
-text(x=xmax,y=0.35,lab=paste("HR=",hr.test),pos=2)
-text(x=xmax,y=0.3,lab=paste("p=",p.test,"",sep=""),pos=2)
+text(x=xmax, y=0.35, lab=paste("HR=", hr.test), pos=2)
+text(x=xmax, y=0.3, lab=paste("p=", p.test, "", sep=""), pos=2)
 tmp <- summary(preds.test.dichot)
-text(x=c(xmax,xmax),y=c(0.25,0.2),lab=paste(tmp,names(tmp)),col=1:2,pos=2)
+text(x=c(xmax, xmax), y=c(0.25, 0.2), lab=paste(tmp, names(tmp)), col=1:2, pos=2)
 }
 
 \keyword{ regression }

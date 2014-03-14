@@ -75,7 +75,7 @@ opt.nested.crossval(outerfold=5,nprocessors=1,  #opt.nested.crossval arguments
 ##
 ##
 
-if(require(snow)){
+if(require(parallel)){
 
   ##--------------------------------
   ## survival

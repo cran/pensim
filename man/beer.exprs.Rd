@@ -21,9 +21,9 @@ data(beer.exprs)
 }
 \examples{
 data(beer.exprs)
-mysd <- apply(beer.exprs,1,sd)
+mysd <- apply(beer.exprs, 1, sd)
 %%##100 most changing probesets
-beer.subset <- as.matrix(beer.exprs[rank(-mysd) <= 100,])  
+beer.subset <- as.matrix(beer.exprs[rank(-mysd) <= 100, ])  
 heatmap(beer.subset)
 }
 \keyword{datasets}

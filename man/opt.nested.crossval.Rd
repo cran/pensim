@@ -18,7 +18,7 @@
   model with greatest cross-validated likelihood.
 }
 \usage{
-opt.nested.crossval(outerfold=10,nprocessors=1,cl=NULL,...)
+opt.nested.crossval(outerfold=10, nprocessors=1, cl=NULL, ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -33,12 +33,12 @@ opt.nested.crossval(outerfold=10,nprocessors=1,cl=NULL,...)
   }
   \item{cl}{
     Optional cluster object created with the makeCluster() function of
-    the snow package.  If this is not set, pensim calls
+    the parallel package.  If this is not set, pensim calls
     makeCluster(nprocessors, type="SOCK").   Setting this parameter
     can enable parallelization in more diverse scenarios than multi-core
-    desktops; see the documentation for the snow package.  Note that if
+    desktops; see the documentation for the parallel package.  Note that if
     cl is user-defined, this function will not automatically run
-    snow::stopCluster() to shut down the cluster.
+    parallel::stopCluster() to shut down the cluster.
 }
   \item{\dots}{
     optFUN (either "opt1D" or "opt2D"), scaling (TRUE to z-score
@@ -101,7 +101,7 @@ opt.nested.crossval(outerfold=10,nprocessors=1,cl=NULL,...)
   Levi Waldron et al.
 }
 \note{
-  Depends on the R packages: penalized, snow, rlecuyer
+  Depends on the R packages: penalized, parallel
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -113,24 +113,25 @@ opt.nested.crossval(outerfold=10,nprocessors=1,cl=NULL,...)
 data(beer.exprs)
 data(beer.survival)
 
-##select just 250 genes to speed computation:
+##select just 100 genes to speed computation:
 set.seed(1)
-beer.exprs.sample <- beer.exprs[sample(1:nrow(beer.exprs), 250), ]
+beer.exprs.sample <- beer.exprs[sample(1:nrow(beer.exprs), 100), ]
 
-gene.quant <- apply(beer.exprs.sample,1,quantile,probs=0.75)
-dat.filt <- beer.exprs.sample[gene.quant>log2(100),]
-gene.iqr <- apply(dat.filt,1,IQR)
-dat.filt <- as.matrix(dat.filt[gene.iqr>0.5,])
+gene.quant <- apply(beer.exprs.sample, 1, quantile, probs=0.75)
+dat.filt <- beer.exprs.sample[gene.quant>log2(100), ]
+gene.iqr <- apply(dat.filt, 1, IQR)
+dat.filt <- as.matrix(dat.filt[gene.iqr>0.5, ])
 dat.filt <- t(dat.filt)
 dat.filt <- data.frame(dat.filt)
 
 library(survival)
-surv.obj <- Surv(beer.survival$os,beer.survival$status)
+surv.obj <- Surv(beer.survival$os, beer.survival$status)
 
 ## First, test the regression arguments using functions from
-## the penalized package:
-library(penalized)
-testfit <- optL1(response=surv.obj,
+## the penalized package.  I use maxlambda1=5 here to ensure at least
+## one non-zero coefficient.
+testfit <- penalized::optL1(response=surv.obj, 
+                 maxlambda1=5,
                  penalized=dat.filt,
                  fold=5,
                  positive=FALSE,
@@ -156,19 +157,22 @@ testfit <- optL1(response=surv.obj,
 ## scaling=TRUE scales variables in the training set then applies the
 ## same scales to the test set.
 set.seed(1)
-preds <- opt.nested.crossval(outerfold=5,nprocessors=1,  #opt.nested.crossval arguments
-             optFUN="opt1D",scaling=FALSE,               #opt.splitval arguments
-             setpen="L1",nsim=1,                         #opt1D arguments
+## In this example I use two processors:
+preds <- opt.nested.crossval(outerfold=5, nprocessors=2,  #opt.nested.crossval arguments
+             optFUN="opt1D", scaling=FALSE,               #opt.splitval arguments
+             setpen="L1", nsim=1,                         #opt1D arguments
              response=surv.obj,                          #rest are penalized::optl1 arguments
              penalized=dat.filt,
-             fold=5,
+             fold=2,
+             maxlambda1=5,
              positive=FALSE,
              standardize=TRUE,
              trace=FALSE)
 
 ## We probably also want the coefficients from the model fit on all the
 ## data, for future use:
-beer.coefs <- opt1D(setpen="L1",nsim=1,                        
+beer.coefs <- opt1D(setpen="L1", nsim=1,
+             maxlambda1=5,
              response=surv.obj,                         
              penalized=dat.filt,
              fold=5,
@@ -182,9 +186,10 @@ beer.coefs <- opt1D(setpen="L1",nsim=1,
 ## [,1] preserves the variable name.  With [,1] the variable name gets
 ## converted to "".
 
-beer.coefs <- opt1D(setpen="L1",nsim=1,                        
+beer.coefs <- opt1D(setpen="L1", nsim=1, 
+             maxlambda1=5,
              response=surv.obj,                         
-             penalized=dat.filt[-1],   # This is equivalent to dat.filt[,-1]
+             penalized=dat.filt[-1],   # This is equivalent to dat.filt[, -1]
              unpenalized=dat.filt[1],  
              fold=5,
              positive=FALSE,
@@ -203,16 +208,18 @@ summary(coxfit.dichot)
 if(require(survivalROC)){
   nobs <- length(preds)
   cutoff <- 12
-  preds.roc <- survivalROC(Stime=beer.survival$os,status=beer.survival$status,
-                         marker=preds,predict.time=cutoff,span = 0.25*nobs^(-0.20))
-  plot(preds.roc$FP, preds.roc$TP, type="l", xlim=c(0,1), ylim=c(0,1),   
-       xlab=paste( "FP", "\n", "AUC = ",round(preds.roc$AUC,3)), 
-       ylab="TP",main="LASSO predictions\n ROC curve at 12 months")
-  abline(0,1)
+  preds.roc <- survivalROC(Stime=beer.survival$os, status=beer.survival$status,
+                         marker=preds, predict.time=cutoff, span = 0.25*nobs^(-0.20))
+  plot(preds.roc$FP,  preds.roc$TP, type="l", xlim=c(0,1), ylim=c(0,1),
+       lty=2,
+       xlab=paste( "FP", "\n", "AUC = ", round(preds.roc$AUC, 3)), 
+       ylab="TP", main="LASSO predictions\n ROC curve at 12 months")
+  abline(0, 1)
 }
 
 ## clean-up
-rm(nobs,cutoff,preds.roc,coxfit.dichot,coxfit.continuous,preds,preds.dichot,dat.filt,gene.iqr,gene.quant)
+rm(nobs, cutoff, preds.roc, coxfit.dichot, coxfit.continuous, preds, 
+   preds.dichot, dat.filt, gene.iqr, gene.quant)
 }
 \keyword{ regression }
 \keyword{ survival }

@@ -67,7 +67,7 @@ opt.splitval(optFUN="opt1D",testset="equal",scaling=TRUE,...)
   Levi Waldron et al.
 }
 \note{
-  Depends on the R packages: penalized, snow, rlecuyer
+  Depends on the R packages: penalized, parallel, rlecuyer
 }
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
@@ -97,7 +97,8 @@ surv.obj <- Surv(beer.survival$os,beer.survival$status)
 set.seed(1)
 preds50 <- opt.splitval(optFUN="opt1D",scaling=TRUE,testset="equal",
              setpen="L1",nsim=1,nprocessors=1,
-             response=surv.obj,penalized=dat.filt,fold=5,positive=FALSE,standardize=FALSE,trace=FALSE)
+             response=surv.obj,penalized=dat.filt,fold=5,positive=FALSE,
+             standardize=FALSE,trace=FALSE)
 
 preds50.dichot <- preds50 > median(preds50)
 
@@ -108,7 +109,8 @@ summary(coxfit50.continuous)
 summary(coxfit50.dichot)
 
 ##clean-up
-rm(coxfit50.dichot,coxfit50.continuous,preds50,preds50.dichot,surv.obj,surv.obj.50,dat.filt,gene.iqr,gene.quant)
+rm(coxfit50.dichot,coxfit50.continuous,preds50,preds50.dichot,surv.obj,
+   surv.obj.50,dat.filt,gene.iqr,gene.quant)
 }
 \keyword{ regression }
 \keyword{ survival }

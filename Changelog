@@ -25,3 +25,5 @@ user input to create.data().
 
 1.2.5: Fixed new problems introduced by imports in NAMESPACE, added
 tests of opt.nested.crossval().
+
+1.2.8: Vignette to new location, migrate from snow to parallel, misc fixes to documentation.
