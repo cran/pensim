@@ -121,3 +121,19 @@ if(require(parallel)){
                       standardize=TRUE,
                       trace=FALSE)
 }
+
+## opt2D check using pre-specified folds
+
+myfolds <- sample(1:5, size=nrow(dat.filt), replace = TRUE)
+output <- opt2D(
+  nsim = 1,
+  L1range = c(0.1, 1),
+  L2range = c(20, 1000),
+  dofirst = "both",
+  nprocessors = 1,
+  response = surv.obj,
+  penalized = dat.filt,
+  fold = myfolds,
+  positive = FALSE,
+  standardize = TRUE
+)

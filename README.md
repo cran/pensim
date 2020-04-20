@@ -1,3 +1,7 @@
+[![Travis-CI Build Status](https://travis-ci.org/waldronlab/pensim.svg?branch=master)](https://travis-ci.org/waldronlab/pensim)
+[![Coverage Status](https://codecov.io/github/waldronlab/pensim/coverage.svg?branch=master)](https://codecov.io/github/waldronlab/pensim?branch=master)
+[![](https://cranlogs.r-pkg.org/badges/pensim)](https://cran.r-project.org/package=pensim)
+
 # pensim: Simulation of High-dimensional Data and Parallelized Repeated Penalized Regression
 
 Waldron L, Pintilie M, Tsao M-S, Shepherd FA, Huttenhower C, Jurisica

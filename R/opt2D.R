@@ -59,11 +59,11 @@ opt2D <-
                 myargs$fold <- 1:nrow(myargs$penalized)
                 warning("fold argument missing, assuming leave-one-out cross-validation")
             }
-            if(all.equal(length(myargs$fold),1)){
+            if(identical(length(myargs$fold), 1L)){
                 myfolds <- getfolds(N=nrow(myargs$penalized),nfolds=myargs$fold)
                 myargs$fold <- myfolds
             }
-            if(!all.equal(length(myargs$fold),nrow(myargs$penalized))){
+            if(!identical(all.equal(length(myargs$fold),nrow(myargs$penalized)), TRUE)){
                 stop("fold must be a single integer or a string of length equal to the number of samples.")
             }
             if(is.null(myargs$standardize)){
