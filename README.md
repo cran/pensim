@@ -1,6 +1,8 @@
-[![Travis-CI Build Status](https://travis-ci.org/waldronlab/pensim.svg?branch=master)](https://travis-ci.org/waldronlab/pensim)
-[![Coverage Status](https://codecov.io/github/waldronlab/pensim/coverage.svg?branch=master)](https://codecov.io/github/waldronlab/pensim?branch=master)
-[![](https://cranlogs.r-pkg.org/badges/pensim)](https://cran.r-project.org/package=pensim)
+  <!-- badges: start -->
+  [![R-CMD-check](https://github.com/waldronlab/pensim/workflows/R-CMD-check/badge.svg)](https://github.com/waldronlab/pensim/actions)
+  [![Coverage Status](https://codecov.io/github/waldronlab/pensim/coverage.svg?branch=master)](https://codecov.io/github/waldronlab/pensim?branch=master)
+  [![](https://cranlogs.r-pkg.org/badges/pensim)](https://cran.r-project.org/package=pensim)
+  <!-- badges: end -->
 
 # pensim: Simulation of High-dimensional Data and Parallelized Repeated Penalized Regression
 
@@ -57,4 +59,4 @@ as evidenced by reduced prediction accuracy in simulated test sets
 compared to resubstitution of training data.**
 
 [Section 4]: https://academic.oup.com/bioinformatics/article/27/24/3399/306905#SEC4
-[manuscript]: https://bioinformatics.oxfordjournals.org/content/27/24/3399
+[manuscript]: https://doi.org/10.1093/bioinformatics/btr591

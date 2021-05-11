@@ -1,14 +1,13 @@
 bdd39ea87dfab5165d335b8a1a2aef07 *Changelog
-2e65c0f8ee05374f3adcc1ae05e3bdb6 *DESCRIPTION
+8f402079a469b0fc02535bb1c7ef8149 *DESCRIPTION
 c6657b9a4443a8604de258f3ffe8426f *NAMESPACE
-9a92d1bb780482488563f9b313eba552 *NEWS.md
 c9321fb67e2356e386905fa94b627c7b *R/create.data.R
 73fd34bd4aac3d42eb3cf97fc6e73a43 *R/opt.nested.crossval.R
 ed40b3c7d1ec7ac4525ab5daa9fecce2 *R/opt.splitval.R
 459c3e95c18a9811f9ad46a2fbdc25ad *R/opt1D.R
 1ed61d0c33c179bea3ae99762e7f641a *R/opt2D.R
 685c857078e09a76d848a62468294dbb *R/scan.l1l2.R
-f0c9c8c20132d12ef7a7cc876eb777f8 *README.md
+25774e50da075b28748e24c960abfdfa *README.md
 919252d5c623bd64426484c31b59afa8 *build/vignette.rds
 2ceb65a98e0db0deebd0ddc83402ff04 *data/beer.exprs.rda
 e09512751e9d236783d6dc3c2f6efbf2 *data/beer.survival.rda
@@ -16,7 +15,7 @@ e09512751e9d236783d6dc3c2f6efbf2 *data/beer.survival.rda
 2a8bc1d38a56f9c26723117d0435993a *inst/CITATION
 def1c385aabc37d9fc354a133dbe5e9a *inst/doc/pensim.R
 0d01b5bb1b97c48ad318bfc20120a142 *inst/doc/pensim.Rmd
-bc39e16f8894b832f2aae988d1bd396c *inst/doc/pensim.html
+f08133eb216106948668e4f1d3db2985 *inst/doc/pensim.html
 69a94f12bbac716917f7424f7852a41d *man/beer.exprs.Rd
 fa0f3973f928e65d50ac05c573c4566b *man/beer.survival.Rd
 87a2e1901d41990d6e56b87bac579531 *man/create.data.Rd
