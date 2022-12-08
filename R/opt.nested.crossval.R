@@ -38,7 +38,7 @@ opt.nested.crossval <-
                 return(output)
             },extra.vars=extra.vars),silent=FALSE)
         }
-        if(class(output.all)!="try-error"){
+        if(!is(output.all, "try-error")){
             output.all <- unlist(output.all)
             output.all <- output.all[match(rownames(extra.vars$penalized),names(output.all))]
         }else{

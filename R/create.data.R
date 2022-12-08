@@ -14,13 +14,13 @@ create.data <-
         stop("labelswapprob cannot be negative")
     if (labelswapprob > 0 & response == "timetoevent")
         stop("labelswapprob is only implemented for binary response")
-    if (!class(nvars) %in% c("numeric","integer"))
+    if (!is(nvars, "numeric"))
         stop("nvars must be a numeric vector")
-    if (!class(cors) %in% c("numeric","integer"))
+    if (!is(cors, "numeric"))
         stop("cors must be a numeric vector")
-    if (class(firstonly) != "logical")
+    if (!is(firstonly, "logical"))
         stop("firstonly must be a logical vector")
-    if (!class(associations) %in% c("numeric","integer"))
+    if (!is(associations, "numeric"))
         stop("associations must be a numeric vector")
     if (length(nvars) != length(cors) | length(nvars) != length(firstonly) |
         length(nvars) != length(associations))
@@ -56,7 +56,7 @@ create.data <-
         h = basehaz * exp(betaX[, 1])
         x.out$time <- rexp(length(h), h)
         x.out$cens <- 1
-        if(class(censoring)=="numeric" | class(censoring)=="integer"){
+        if(is(censoring, "numeric")){
           if(length(censoring)==2){
             censtimes <- runif(length(h),min=censoring[1],max=censoring[2])
           }else if(length(censoring)==1){

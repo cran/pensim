@@ -7,7 +7,7 @@ opt2D <-
             maxL2 <- max(lambdarange[3:4])
             opt1 <- try(optL1(lambda2=minL2,minlambda1=minL1,...)) #testcode
             opt2 <- try(optL2(lambda1=opt1$lambda,...)) #testcode
-            if(class(opt1)!="try-error"&class(opt2)!="try-error"){
+            if(is(opt1, "try-error") & is(opt2, "try-error")){
                 L1=opt1$lambda
                 L2=opt2$lambda
                 cvall <- opt2$cvl
@@ -27,7 +27,7 @@ opt2D <-
             maxL2 <- max(lambdarange[3:4])
             opt2 <- try(optL2(lambda1=minL1,minlambda2=minL2,...)) #testcode
             opt1 <- try(optL1(lambda2=opt2$lambda,...)) #testcode
-            if(class(opt1)!="try-error"&class(opt2)!="try-error"){
+            if(is(opt1, "try-error") & is(opt2, "try-error")){
                 L2=opt2$lambda
                 L1=opt1$lambda
                 cvall <- opt1$cvl
@@ -72,7 +72,7 @@ opt2D <-
             }
             cvl.simple <- function(x1,x2,...){
                 trycvl <- try(cvl(lambda1=x1,lambda2=x2,...))
-                if(class(trycvl)=="try-error"){
+                if(is(trycvl, "try-error")){
                     print(paste("warning: try-error, faking cvl =",-10000))
                     return(list(cvl=-10000))
                 }else{
@@ -93,7 +93,7 @@ opt2D <-
                                  myargs=myargs,
                                  ##factr=1e12 for very fast convergence -  1e10 or 11 for very accurate
                                  control=list(fnscale=-1,maxit=50,factr=1e11,trace=0)))  #trace=6 for full info
-            if(class(opt.out)=="try-error"){
+            if(is(opt.out, "try-error")){
                 output <- rep(NA,nrow(myargs$penalized)+5)
                 names(output) <- c("L1","L2","cvl","convergence","fncalls",rownames(myargs$penalized))
             }else{

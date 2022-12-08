@@ -157,18 +157,18 @@ Plot the ROC curve:
 
 
 ```{r ROCplot, fig.cap="**Figure 1: ROC plot of cross-validated continuous risk predictions at 12 months.** Note that the predictions are better if you don't randomly select 250 genes to start with!  We only did this to ease the load on the CRAN checking servers."}
-library(survivalROC)
 nobs <- length(preds)
 cutoff <- 12
-preds.roc <-
-  survivalROC(
+if (requireNamespace("survivalROC", quietly = TRUE)) {
+ preds.roc <-
+  survivalROC::survivalROC(
     Stime = beer.survival$os,
     status = beer.survival$status,
     marker = preds,
     predict.time = cutoff,
     span = 0.01 * nobs ^ (-0.20)
   )
-plot(
+ plot(
   preds.roc$FP,
   preds.roc$TP,
   type = "l",
@@ -178,8 +178,9 @@ plot(
   lty = 2,
   ylab = "TP",
   main = "LASSO predictions\n ROC curve at 12 months"
-)
-abline(0, 1)
+ )
+ abline(0, 1)
+}
 ```
 
 

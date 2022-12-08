@@ -1,3 +1,4 @@
+importFrom("methods", "is")
 importFrom(stats, na.omit, optim, rbinom, rexp, runif)
 importFrom(parallel, makeCluster, stopCluster, clusterSetRNGStream, parLapply, parSapply)
 importFrom(penalized, optL1, optL2, cvl, coefficients)

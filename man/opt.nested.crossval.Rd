@@ -226,6 +226,7 @@ summary(coxfit.dichot)
 
 nobs <- length(preds)
 cutoff <- 12
+if (requireNamespace("survivalROC", quietly = TRUE)) {
 preds.roc <-
   survivalROC::survivalROC(
     Stime = beer.survival$os,
@@ -234,7 +235,7 @@ preds.roc <-
     predict.time = cutoff,
     span = 0.25 * nobs ^ (-0.20)
   )
-plot(
+ plot(
   preds.roc$FP,
   preds.roc$TP,
   type = "l",
@@ -244,8 +245,9 @@ plot(
   xlab = paste("FP", "\n", "AUC = ", round(preds.roc$AUC, 3)),
   ylab = "TP",
   main = "LASSO predictions\n ROC curve at 12 months"
-)
-abline(0, 1)
+ )
+ abline(0, 1)
+ }
 }
 \keyword{ regression }
 \keyword{ survival }
